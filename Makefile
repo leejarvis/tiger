@@ -2,7 +2,7 @@ TARGET=bin/tiger
 SRC=src/parse.tab.c src/lex.yy.c
 
 LEX=flex
-YACC=bison
+YACC=bison -y
 
 all: tiger
 
