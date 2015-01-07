@@ -1,27 +1,33 @@
 %{
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
-#define TYPE(t, value) printf("%s(%s)\n", t, value)
-#define TOK(t) printf("%s\n", t)
+#include "parse.tab.h"
+
+#define TOK(id) return t##id
+#define KW(id) return kw##id
+
 %}
 
 %option noyywrap
+%option yylineno
 
 %%
-[0-9]+              { TYPE("NUMBER", yytext); }
-[a-z_][a-zA-Z0-9_]* { TYPE("ID", yytext); }
+func                { KW(FUNC); }
 
-\"([^\\\"]|\\.)*\" { TYPE("STRING", yytext); }
+[0-9]+              { yylval.ival = atoi(yytext); TOK(NUMBER); }
+[a-z_][a-zA-Z0-9_]* { yylval.sval = strdup(yytext); TOK(ID); }
+\"([^\\\"]|\\.)*\"  { yylval.sval = strdup(yytext); TOK(STRING); }
 
-"(" { TOK("LPAREN"); }
-")" { TOK("RPAREN"); }
-"{" { TOK("LCURLY"); }
-"}" { TOK("RCURLY"); }
-"," { TOK("COMMA"); }
+"(" { TOK(LPAREN); }
+")" { TOK(RPAREN); }
+"{" { TOK(LCURLY); }
+"}" { TOK(RCURLY); }
+"," { TOK(COMMA); }
 
 \/\/.*$ {}
-\n {}
+\n { ++yylineno; }
 [ \t] ;
 
 . {
@@ -40,3 +46,6 @@ int main(int argc, char *argv[]) {
   return EXIT_SUCCESS;
 }
 
+void yyerror(char const *s) {
+  fprintf(stderr, "%s. Unexpected \"%s\" on line %d\n", s, yytext, yylineno);
+}

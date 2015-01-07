@@ -1,11 +1,28 @@
 %{
 #include <stdio.h>
+
 extern int yylex(void);
-void yyerror(char const *s) { fprintf(stderr, "%s\n", s); }
+extern void yyerror(char const *s);
 %}
 
+%union {
+        int ival;
+        float fval;
+        char *sval;
+}
+
 %token
-        identifier
+        kwFUNC
+
+%token
+        tNUMBER
+        tID
+        tSTRING
+        tLPAREN
+        tRPAREN
+        tLCURLY
+        tRCURLY
+        tCOMMA
 
 %start program
 
@@ -16,4 +33,9 @@ program: expressions
 expressions: expressions expression
            | expression
 
-expression: identifier { printf("PARSED(%d)\n", $1); }
+expression: func_definition
+          | value
+
+func_definition: kwFUNC tLPAREN tID tRPAREN tLCURLY expressions tRCURLY
+
+value: tNUMBER
