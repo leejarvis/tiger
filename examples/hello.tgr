@@ -1,0 +1,7 @@
+// comment
+
+func hello(str) {
+  println("Hello, ", str)
+}
+
+hello("world")
