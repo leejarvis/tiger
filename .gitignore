@@ -1,3 +1,4 @@
 /bin
 /src/lex.yy.c
 /src/parse.tab.c
+src/parse.tab.h
