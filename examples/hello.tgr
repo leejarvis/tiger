@@ -5,4 +5,3 @@ func hello(str) {
 }
 
 hello("world")
-#
